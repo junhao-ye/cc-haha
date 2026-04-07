@@ -266,9 +266,7 @@ export function EmptySession() {
     <div className="relative flex flex-1 flex-col overflow-hidden bg-[#FAF9F5]">
       <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32">
         <div className="flex max-w-md flex-col items-center text-center">
-          <div className="mb-6 h-24 w-24 opacity-40 grayscale contrast-125">
-            <MascotIllustration />
-          </div>
+          <img src="/app-icon.jpg" alt="Claude Code Haha" className="mb-6 h-24 w-24 rounded-[18px]" />
           <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-[#1B1C1A]" style={{ fontFamily: "'Manrope', sans-serif" }}>
             New session
           </h1>
@@ -390,29 +388,3 @@ export function EmptySession() {
   )
 }
 
-function MascotIllustration() {
-  return (
-    <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="24" y="30" width="48" height="36" rx="8" fill="#C47A5A" />
-      <rect x="28" y="18" width="40" height="16" rx="6" fill="#B86B4A" />
-      <line x1="48" y1="10" x2="48" y2="18" stroke="#A0796A" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="48" cy="8" r="3" fill="#D4936F" />
-      <circle cx="40" cy="26" r="2.5" fill="#1B1C1A" />
-      <circle cx="56" cy="26" r="2.5" fill="#1B1C1A" />
-      <circle cx="41" cy="25" r="1" fill="white" opacity="0.7" />
-      <circle cx="57" cy="25" r="1" fill="white" opacity="0.7" />
-      <path d="M43 31 Q48 35 53 31" stroke="#1B1C1A" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <rect x="36" y="40" width="24" height="16" rx="4" fill="#D4936F" opacity="0.5" />
-      <line x1="40" y1="44" x2="56" y2="44" stroke="#B86B4A" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-      <line x1="40" y1="48" x2="56" y2="48" stroke="#B86B4A" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-      <line x1="40" y1="52" x2="52" y2="52" stroke="#B86B4A" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-      <rect x="14" y="36" width="10" height="22" rx="5" fill="#C47A5A" />
-      <rect x="72" y="36" width="10" height="22" rx="5" fill="#C47A5A" />
-      <rect x="32" y="66" width="12" height="16" rx="5" fill="#C47A5A" />
-      <rect x="52" y="66" width="12" height="16" rx="5" fill="#C47A5A" />
-      <rect x="30" y="78" width="16" height="6" rx="3" fill="#B86B4A" />
-      <rect x="50" y="78" width="16" height="6" rx="3" fill="#B86B4A" />
-      <rect x="28" y="30" width="40" height="4" rx="2" fill="#D4936F" opacity="0.3" />
-    </svg>
-  )
-}

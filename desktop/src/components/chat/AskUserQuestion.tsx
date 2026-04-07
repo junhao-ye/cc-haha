@@ -85,7 +85,10 @@ export function AskUserQuestion({ toolUseId: _toolUseId, input }: Props) {
 
   // All questions must be answered (via selection or free text) to enable submit
   const allAnswered = freeText.trim().length > 0 || questions.every((_, i) => selections[i] !== undefined)
-  const activeQuestion = questions[activeTab]
+  const safeActiveTab = Math.min(activeTab, questions.length - 1)
+  const activeQuestion = questions[safeActiveTab]
+
+  if (!activeQuestion) return null
 
   return (
     <div className={`mb-4 ml-10 rounded-[var(--radius-lg)] border overflow-hidden ${
@@ -120,7 +123,7 @@ export function AskUserQuestion({ toolUseId: _toolUseId, input }: Props) {
       {questions.length > 1 && (
         <div className="flex px-4 border-b border-[var(--color-outline-variant)]/20 bg-[var(--color-surface-container-low)] overflow-x-auto">
           {questions.map((q, i) => {
-            const isActive = activeTab === i
+            const isActive = safeActiveTab === i
             const isAnswered = selections[i] !== undefined
             const tabLabel = q.header || `Q${i + 1}`
             return (
@@ -160,7 +163,7 @@ export function AskUserQuestion({ toolUseId: _toolUseId, input }: Props) {
               return (
                 <button
                   key={optIndex}
-                  onClick={() => handleSelect(activeTab, opt.label)}
+                  onClick={() => handleSelect(safeActiveTab, opt.label)}
                   disabled={submitted}
                   className={`w-full text-left px-4 py-3 rounded-[var(--radius-md)] border transition-all duration-150 cursor-pointer ${
                     isSelected

@@ -2,12 +2,13 @@
  * CORS middleware for local desktop app communication
  */
 
+const ALLOWED_ORIGIN_RE =
+  /^(?:https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?|tauri:\/\/localhost|https:\/\/tauri\.localhost)$/
+
 export function corsHeaders(origin?: string | null): Record<string, string> {
-  // Only allow localhost origins for security
+  // Allow localhost origins (http/https) and Tauri WebView origins
   const allowedOrigin =
-    origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
-      ? origin
-      : 'http://localhost:3000'
+    origin && ALLOWED_ORIGIN_RE.test(origin) ? origin : 'http://localhost:3000'
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',

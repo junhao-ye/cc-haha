@@ -3,6 +3,7 @@ import { wsManager } from '../api/websocket'
 import { sessionsApi } from '../api/sessions'
 import { useTeamStore } from './teamStore'
 import { useCLITaskStore } from './cliTaskStore'
+import { randomSpinnerVerb } from '../config/spinnerVerbs'
 import type { MessageEntry } from '../types/session'
 import type { PermissionMode } from '../types/settings'
 import type { AttachmentRef, ChatState, UIAttachment, UIMessage, ServerMessage, TokenUsage } from '../types/chat'
@@ -147,6 +148,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       chatState: 'thinking',
       elapsedSeconds: 0,
       streamingText: '',
+      statusVerb: randomSpinnerVerb(),
     }))
 
     // Start elapsed timer
@@ -200,7 +202,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       case 'status':
         set({
           chatState: msg.state,
-          ...(msg.verb ? { statusVerb: msg.verb } : {}),
+          // Only override statusVerb if the server sends something other than
+          // the generic 'Thinking' — otherwise keep the random verb we picked
+          // in sendMessage so the user sees fun loading text.
+          ...(msg.verb && msg.verb !== 'Thinking' ? { statusVerb: msg.verb } : {}),
           ...(msg.tokens ? { tokenUsage: { ...get().tokenUsage, output_tokens: msg.tokens } } : {}),
           ...(msg.state === 'idle' ? { activeThinkingId: null, statusVerb: '' } : {}),
         })

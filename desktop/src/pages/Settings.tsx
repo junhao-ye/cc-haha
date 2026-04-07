@@ -7,6 +7,7 @@ import { Input } from '../components/shared/Input'
 import { Button } from '../components/shared/Button'
 import type { PermissionMode, EffortLevel } from '../types/settings'
 import { PROVIDER_PRESETS } from '../config/providerPresets'
+import type { ProviderPreset } from '../config/providerPresets'
 import type { SavedProvider, UpdateProviderInput, ProviderTestResult, ModelMapping } from '../types/provider'
 
 type SettingsTab = 'providers' | 'permissions' | 'general'
@@ -214,14 +215,28 @@ type ProviderFormProps = {
   provider?: SavedProvider
 }
 
+function requirePreset(preset: ProviderPreset | undefined): ProviderPreset {
+  if (!preset) {
+    throw new Error('Provider presets are not configured')
+  }
+  return preset
+}
+
 function ProviderFormModal({ open, onClose, mode, provider }: ProviderFormProps) {
   const { createProvider, updateProvider, testConfig } = useProviderStore()
   const fetchSettings = useSettingsStore((s) => s.fetchAll)
 
   const availablePresets = PROVIDER_PRESETS.filter((p) => p.id !== 'official')
-  const initialPreset = provider ? availablePresets.find((p) => p.id === provider.presetId) || availablePresets.at(-1)! : availablePresets[0]
+  const fallbackPreset = requirePreset(
+    availablePresets[availablePresets.length - 1] ?? PROVIDER_PRESETS[0],
+  )
+  const initialPreset = requirePreset(
+    provider
+      ? availablePresets.find((p) => p.id === provider.presetId) ?? fallbackPreset
+      : availablePresets[0] ?? fallbackPreset,
+  )
 
-  const [selectedPreset, setSelectedPreset] = useState(initialPreset)
+  const [selectedPreset, setSelectedPreset] = useState<ProviderPreset>(initialPreset)
   const [name, setName] = useState(provider?.name ?? initialPreset.name)
   const [baseUrl, setBaseUrl] = useState(provider?.baseUrl ?? initialPreset.baseUrl)
   const [apiKey, setApiKey] = useState('')
@@ -263,7 +278,7 @@ function ProviderFormModal({ open, onClose, mode, provider }: ProviderFormProps)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPreset.id])
 
-  const handlePresetChange = (preset: typeof initialPreset) => {
+  const handlePresetChange = (preset: ProviderPreset) => {
     setSelectedPreset(preset)
     setName(preset.name)
     setBaseUrl(preset.baseUrl)
@@ -442,7 +457,9 @@ function ProviderFormModal({ open, onClose, mode, provider }: ProviderFormProps)
                     // Auto-switch to matching preset or Custom
                     if (mode === 'create') {
                       const matchedPreset = availablePresets.find((p) => p.id !== 'custom' && p.baseUrl === env.ANTHROPIC_BASE_URL)
-                      const targetPreset = matchedPreset || availablePresets.find((p) => p.id === 'custom')!
+                      const targetPreset = requirePreset(
+                        matchedPreset ?? availablePresets.find((p) => p.id === 'custom'),
+                      )
                       if (targetPreset.id !== selectedPreset.id) {
                         jsonPastedRef.current = true
                         setSelectedPreset(targetPreset)

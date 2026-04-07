@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:sidecars": "bun run ./scripts/build-sidecars.ts",
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "vitest",

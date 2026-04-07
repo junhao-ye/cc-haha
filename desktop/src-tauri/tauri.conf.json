@@ -6,8 +6,8 @@
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
-    "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build"
+    "beforeDevCommand": "bun run build:sidecars && bun run dev",
+    "beforeBuildCommand": "bun run build && bun run build:sidecars"
   },
   "app": {
     "windows": [
@@ -17,7 +17,7 @@
         "height": 800,
         "minWidth": 900,
         "minHeight": 600,
-        "decorations": false,
+        "decorations": true,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
         "transparent": false
@@ -30,6 +30,19 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "externalBin": [
+      "binaries/claude-server",
+      "binaries/claude-cli"
+    ],
+    "resources": {
+      "../../src/": "app/src/",
+      "../../node_modules/": "app/node_modules/",
+      "../../package.json": "app/package.json",
+      "../../tsconfig.json": "app/tsconfig.json",
+      "../../bunfig.toml": "app/bunfig.toml",
+      "../../preload.ts": "app/preload.ts",
+      "../../stubs/": "app/stubs/"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

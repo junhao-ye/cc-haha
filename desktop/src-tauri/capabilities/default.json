@@ -6,7 +6,26 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "shell:allow-execute",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "args": true,
+          "name": "binaries/claude-server",
+          "sidecar": true
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "args": true,
+          "name": "binaries/claude-server",
+          "sidecar": true
+        }
+      ]
+    },
     "dialog:allow-open",
     "dialog:allow-save",
     "process:allow-exit",

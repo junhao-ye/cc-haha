@@ -1,7 +1,11 @@
 # Claude Code Haha
 
 <p align="center">
-  <img src="docs/images/banner.jpg" alt="Claude Code Haha Banner" width="800">
+  <img src="docs/images/app-icon.jpg" alt="Claude Code Haha" width="128" style="border-radius: 22px;">
+</p>
+
+<p align="center">
+  <img src="docs/images/logo-horizontal.jpg" alt="Claude Code Haha" width="480">
 </p>
 
 <div align="center">

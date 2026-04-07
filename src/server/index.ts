@@ -12,8 +12,34 @@ import { requireAuth } from './middleware/auth.js'
 import { teamWatcher } from './services/teamWatcher.js'
 import { cronScheduler } from './services/cronScheduler.js'
 
-const PORT = parseInt(process.env.SERVER_PORT || '3456', 10)
-const HOST = process.env.SERVER_HOST || '127.0.0.1'
+function readArgValue(flag: string): string | undefined {
+  const args = process.argv.slice(2)
+  const index = args.indexOf(flag)
+  if (index === -1) return undefined
+  return args[index + 1]
+}
+
+function hasArgFlag(flag: string): boolean {
+  return process.argv.slice(2).includes(flag)
+}
+
+function resolveServerOptions() {
+  const portArg = readArgValue('--port')
+  const port = Number.parseInt(portArg || process.env.SERVER_PORT || '3456', 10)
+  const host = readArgValue('--host') || process.env.SERVER_HOST || '127.0.0.1'
+  const cliPath = readArgValue('--cli-path')
+  const authRequired = hasArgFlag('--auth-required')
+
+  if (cliPath) {
+    process.env.CLAUDE_CLI_PATH = cliPath
+  }
+
+  return { port, host, authRequired }
+}
+
+const SERVER_OPTIONS = resolveServerOptions()
+const PORT = SERVER_OPTIONS.port
+const HOST = SERVER_OPTIONS.host
 
 export function startServer(port = PORT, host = HOST) {
   const localConnectHost =
@@ -27,7 +53,10 @@ export function startServer(port = PORT, host = HOST) {
    * - Production / non-localhost (e.g. 0.0.0.0): auth enforced automatically.
    * - Explicit opt-in: SERVER_AUTH_REQUIRED=1 forces auth even on localhost.
    */
-  const authRequired = process.env.SERVER_AUTH_REQUIRED === '1' || host !== '127.0.0.1'
+  const authRequired =
+    SERVER_OPTIONS.authRequired ||
+    process.env.SERVER_AUTH_REQUIRED === '1' ||
+    host !== '127.0.0.1'
 
   const server = Bun.serve<WebSocketData>({
     port,
@@ -132,7 +161,10 @@ export function startServer(port = PORT, host = HOST) {
 
       // Health check
       if (url.pathname === '/health') {
-        return Response.json({ status: 'ok', timestamp: new Date().toISOString() })
+        return Response.json(
+          { status: 'ok', timestamp: new Date().toISOString() },
+          { headers: corsHeaders(origin) },
+        )
       }
 
       return new Response('Not Found', { status: 404 })

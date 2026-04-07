@@ -18,6 +18,12 @@ e2e-*.png
 
 # Desktop build output
 desktop/dist/
+desktop/src-tauri/binaries/
+desktop/src-tauri/target/
+desktop/src-tauri/gen/
+
+# Desktop brand asset candidates (keep only selected ones in public/)
+desktop/brand-assets/
 
 # Claude worktrees
 .claude/worktrees/

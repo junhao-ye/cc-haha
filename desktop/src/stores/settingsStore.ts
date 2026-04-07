@@ -10,6 +10,7 @@ type SettingsStore = {
   availableModels: ModelInfo[]
   activeProviderName: string | null
   isLoading: boolean
+  error: string | null
 
   fetchAll: () => Promise<void>
   setPermissionMode: (mode: PermissionMode) => Promise<void>
@@ -24,9 +25,10 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   availableModels: [],
   activeProviderName: null,
   isLoading: false,
+  error: null,
 
   fetchAll: async () => {
-    set({ isLoading: true })
+    set({ isLoading: true, error: null })
     try {
       const [{ mode }, modelsRes, { model }, { level }] = await Promise.all([
         settingsApi.getPermissionMode(),
@@ -41,9 +43,13 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
         currentModel: model,
         effortLevel: level,
         isLoading: false,
+        error: null,
       })
-    } catch {
-      set({ isLoading: false })
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to load desktop settings'
+      set({ isLoading: false, error: message })
+      throw error
     }
   },
 

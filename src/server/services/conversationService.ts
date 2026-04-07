@@ -447,14 +447,42 @@ export class ConversationService {
     return args
   }
 
+  private resolveBundledCliPath(): string | null {
+    const execPath = process.execPath
+    const execName = path.basename(execPath)
+
+    if (!execName.startsWith('claude-server')) {
+      return null
+    }
+
+    const bundledCliPath = path.join(
+      path.dirname(execPath),
+      execName.replace(/^claude-server/, 'claude-cli'),
+    )
+
+    return fs.existsSync(bundledCliPath) ? bundledCliPath : null
+  }
+
   private resolveCliArgs(baseArgs: string[]): string[] {
-    const cliCommand = process.env.CLAUDE_CLI_PATH
+    const cliCommand = process.env.CLAUDE_CLI_PATH || this.resolveBundledCliPath()
     if (!cliCommand) {
       return [path.resolve(import.meta.dir, '../../../bin/claude-haha'), ...baseArgs]
     }
 
     if (/\.(?:[cm]?[jt]s|tsx?)$/i.test(cliCommand)) {
       return ['bun', cliCommand, ...baseArgs]
+    }
+
+    if (
+      process.env.CLAUDE_APP_ROOT &&
+      path.basename(cliCommand).startsWith('claude-cli')
+    ) {
+      return [
+        cliCommand,
+        '--app-root',
+        process.env.CLAUDE_APP_ROOT,
+        ...baseArgs,
+      ]
     }
 
     return [cliCommand, ...baseArgs]

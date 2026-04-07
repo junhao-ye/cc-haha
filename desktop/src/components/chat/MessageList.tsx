@@ -117,10 +117,11 @@ export function MessageList() {
           <AssistantMessage content={streamingText} isStreaming />
         )}
 
-        {/* Only show StreamingIndicator for tool_executing state.
-            During 'thinking', the active ThinkingBlock already shows animation.
-            During 'streaming', the AssistantMessage shows the cursor. */}
-        {chatState === 'tool_executing' && (
+        {/* Show StreamingIndicator when:
+            - tool_executing: tool is running
+            - thinking but no active ThinkingBlock yet: the gap between
+              sending a message and receiving the first thinking delta */}
+        {(chatState === 'tool_executing' || (chatState === 'thinking' && !activeThinkingId)) && (
           <StreamingIndicator />
         )}
 
