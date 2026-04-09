@@ -48,6 +48,11 @@ export function SkillList() {
     [skills],
   )
 
+  const visibleGroupCount = useMemo(
+    () => SOURCE_ORDER.filter((source) => (grouped[source] ?? []).length > 0).length,
+    [grouped],
+  )
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -121,7 +126,7 @@ export function SkillList() {
         </div>
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className={`grid gap-4 ${visibleGroupCount >= 2 ? 'xl:grid-cols-2' : ''}`}>
         {SOURCE_ORDER.map((source) => {
           const group = grouped[source]
           if (!group?.length) return null
